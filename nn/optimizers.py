@@ -1,10 +1,13 @@
-class Optimizer:
+from abc import ABC, abstractmethod
 
-    def __init__(self):
-        return
+
+class Optimizer(ABC):
+    pass
 
 
 class SGD(Optimizer):
+    pass
 
-    def __init__(self):
-        super(SGD, Optimizer).__init__()
+
+class Adam(Optimizer):
+    pass

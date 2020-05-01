@@ -6,19 +6,16 @@ from .metrics import cross_entropy
 
 class Loss(ABC):
 
-    def __init__(self):
-        return
-
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)
 
     @abstractmethod
     def forward(self, *args, **kwargs):
-        return
+        pass
 
     @abstractmethod
     def backward(self, *args, **kwargs):
-        return
+        pass
 
 
 class SoftmaxCrossEntropy(Loss):

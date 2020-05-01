@@ -6,16 +6,16 @@ from .losses import SoftmaxCrossEntropy, NegativeLogLikelihood
 
 class Model(ABC):
 
-    def __init__(self):
-        return
+    def __call__(self, *args, **kwargs):
+        return self.predict(*args, **kwargs)
 
     @abstractmethod
-    def fit(self, X, y, *args):
-        return
+    def fit(self, X, y, *args, **kwargs):
+        pass
 
     @abstractmethod
-    def predict(self, X, *args):
-        return
+    def predict(self, X, *args, **kwargs):
+        pass
 
 
 class LogisticClassifier(Model):
