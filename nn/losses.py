@@ -1,7 +1,10 @@
+from abc import ABC, abstractmethod
 import numpy as np
+from .math import sigmoid, softmax
+from .metrics import cross_entropy
 
 
-class Loss:
+class Loss(ABC):
 
     def __init__(self):
         return
@@ -9,9 +12,11 @@ class Loss:
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)
 
+    @abstractmethod
     def forward(self, *args, **kwargs):
         return
 
+    @abstractmethod
     def backward(self, *args, **kwargs):
         return
 
@@ -22,32 +27,18 @@ class SoftmaxCrossEntropy(Loss):
         super(SoftmaxCrossEntropy, self).__init__()
 
     def forward(self, out, y):
-        probs = self._softmax(out)
-        loss = self._cross_entropy(probs, y)
+        self.probs = softmax(out)
 
-        self.probs = probs
-
-        return loss
+        return cross_entropy(self.probs, y)
 
     def backward(self, out, y):
         N = y.shape[0]
+
         dloss = self.probs
         dloss[range(N), y] -= 1
         dloss /= N
 
         return dloss
-
-    def _softmax(self, x):
-        exps = np.exp(x - np.max(x, axis=1, keepdims=True))
-        probs = exps / np.sum(exps, axis=1, keepdims=True)
-
-        return probs
-
-    def _cross_entropy(self, probs, y): # https://deepnotes.io/softmax-crossentropy
-        N = y.shape[0]
-        log_likelihood = -np.log(probs[range(N), y])
-
-        return np.sum(log_likelihood) / N
 
 
 class NegativeLogLikelihood(Loss):
@@ -58,12 +49,9 @@ class NegativeLogLikelihood(Loss):
     def forward(self, out, y):
         N = y.shape[0]
 
-        sigmoids = self._sigmoid(y.reshape(N, 1) * out)
-        self.sigmoids = sigmoids
+        self.sigmoids = sigmoid(y.reshape(N, 1) * out)
 
-        loss = np.sum(np.log(sigmoids)) / N
-
-        return loss
+        return np.sum(np.log(self.sigmoids)) / N
 
     def backward(self, out, y):
         N = y.shape[0]
@@ -72,6 +60,3 @@ class NegativeLogLikelihood(Loss):
         dloss = - (y.reshape(N, 1) * h) / N
 
         return dloss
-
-    def _sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))

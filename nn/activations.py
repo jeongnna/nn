@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import numpy as np
+from .math import sigmoid
 
 
 class Activation(ABC):
@@ -28,22 +29,33 @@ class Identity(Activation):
 class Sigmoid(Activation):
 
     def forward(self, x, *args, **kwargs):
-        self.sigmoid = self._sigmoid(x)
+        self.sigmoids = sigmoid(x)
 
-        return self.sigmoid
+        return self.sigmoids
 
     def backward(self, dout, *args, **kwargs):
-        dsig = self.sigmoid * (1 - self.sigmoid)
+        dsig = self.sigmoids * (1.0 - self.sigmoids)
         dx = dout * dsig
 
         return dx
 
     def _sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))
+        return 1.0 / (1.0 + np.exp(-x))
+
+
+class Relu(Activation):
+
+    def forward(self, x, *args, **kwargs):
+        self.relu_mask = x > 0.0
+
+        return x * self.relu_mask
+
+    def backward(self, dout, *args, **kwargs):
+        return dout * self.relu_mask
 
 
 activations = {
-    None: Identity,
     'identity': Identity,
     'sigmoid': Sigmoid,
+    'relu': Relu,
 }
