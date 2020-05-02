@@ -1,8 +1,8 @@
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 import tensorflow as tf
-from nn.math import sigmoid, softmax
 from .utils import transfer
+from nn.math import sigmoid, softmax
 
 
 def test_sigmoid():

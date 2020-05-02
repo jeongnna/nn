@@ -1,4 +1,9 @@
-def safelyInputDimension(dim):
+import numpy as np
+from numpy.testing import assert_array_equal
+from .activations import activations, Activation
+
+
+def _checkLayerDimension(dim):
     if isinstance(dim, int):
         assert dim > 0, 'Dimension must be greater than 0.'
         return (dim,)
@@ -11,3 +16,17 @@ def safelyInputDimension(dim):
 
     else:
         raise TypeError(f'Dimension must be an integer or a tuple. Current value is {dim}.')
+
+
+def _checkActivation(activation):
+    if activation is None:
+        return activations['identity']()
+
+    elif isinstance(activation, str):
+        return activations[activation]()
+
+    elif isinstance(activation, Activation):
+        return activation
+
+    else:
+        raise TypeError(f'Argument `activation` must be a string or an instance of {Activation}. Current value is {activation}.')

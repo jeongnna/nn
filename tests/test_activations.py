@@ -1,8 +1,8 @@
 import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
 import tensorflow as tf
-from nn.activations import Identity, Sigmoid, Relu
 from .utils import transfer
+from nn.activations import Identity, Sigmoid, Relu
 
 
 def test_identity():

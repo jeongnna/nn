@@ -21,8 +21,6 @@ class Model(ABC):
 class LogisticClassifier(Model):
 
     def __init__(self, num_features, num_category):
-        super(LogisticClassifier, self).__init__()
-
         self.dense = Dense(num_features, num_category)
         self.loss = SoftmaxCrossEntropy()
 

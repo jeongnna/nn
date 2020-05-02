@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 import numpy as np
-from .safeutils import safelyInputDimension
-from .activations import activations, Activation
+from .safeutils import _checkLayerDimension, _checkActivation
 
 
 class Layer(ABC):
@@ -21,56 +20,41 @@ class Layer(ABC):
 class Affine(Layer):
 
     def __init__(self, inputDim, outputDim):
-        inputDim = safelyInputDimension(inputDim)
-        outputDim = safelyInputDimension(outputDim)
+        inputDim = _checkLayerDimension(inputDim)
+        outputDim = _checkLayerDimension(outputDim)
 
-        self.w = np.zeros((*inputDim, *outputDim))
-        self.b = np.zeros((1, *outputDim))
+        self.weight = np.zeros((*inputDim, *outputDim))
+        self.bias = np.zeros((1, *outputDim))
 
     def forward(self, x, *args, **kwargs):
-        self.x = x
+        self._x = x
 
-        return x.dot(self.w) + self.b
+        return x.dot(self.weight) + self.bias
 
     def backward(self, dout, *args, **kwargs):
         needUpdate = kwargs.get('needUpdate', True)
 
-        print('dout: {}'.format(dout.shape))
-        print('w: {}'.format(self.w.shape))
-
         assert dout.shape[-1]
-        dx = dout.dot(self.w.T)
+        dx = dout.dot(self.weight.T)
 
         if needUpdate:
-            dw = self.x.T.dot(dout)
-            db = np.sum(dout, axis=0).reshape(self.b.shape)
-            self.update(dw, db)
+            dw = self._x.T.dot(dout)
+            db = np.sum(dout, axis=0).reshape(self.bias.shape)
+            self._update(dw, db)
 
         return dx
 
-    def update(self, dw, db):
-        assert dw.shape == self.w.shape
-        assert db.shape == self.b.shape
-        self.w -= dw
-        self.b -= db
+    def _update(self, dw, db):
+        assert dw.shape == self.weight.shape and db.shape == self.bias.shape
+        self.weight -= dw
+        self.bias -= db
 
 
 class Dense(Layer):
 
-    def __init__(self, inputDim, outputDim, activation=None, *args, **kwargs):
-        if activation is None:
-            self.activation = activations['identity']()
-
-        elif isinstance(activation, str):
-            self.activation = activations[activation]()
-
-        elif isinstance(activation, Activation):
-            self.activation = activation
-
-        else:
-            raise TypeError(f'Argument `activation` must be a string or an instance of {Activation}. Current value is {activation}.')
-
+    def __init__(self, inputDim, outputDim, activation=None):
         self.affine = Affine(inputDim, outputDim)
+        self.activation = _checkActivation(activation)
 
     def forward(self, x, *args, **kwargs):
         affined = self.affine(x)
@@ -82,3 +66,19 @@ class Dense(Layer):
         dx = self.affine.backward(dact, *args, **kwargs)
 
         return dx
+
+    @property
+    def weight(self):
+        return self.affine.weight
+
+    @weight.setter
+    def weight(self, value):
+        self.affine.weight = value
+
+    @property
+    def bias(self):
+        return self.affine.bias
+
+    @bias.setter
+    def bias(self, value):
+        self.affine.bias = value
