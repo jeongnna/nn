@@ -36,19 +36,21 @@ class LogisticClassifier(Model):
 
         for epoch in range(n_epochs):
             for X_batch, y_batch in ds.batch(batch_size):
-                # forward
-                X_batch = self.flatten(X_batch)
-                out = self.dense(X_batch)
-                loss = self.loss(out, y_batch)
-
-                # backward
-                dloss = self.loss.backward(out, y_batch)
-                _ = self.dense.backward(dloss)
+                loss = self.train_batch(X_batch, y_batch)
 
             print(f'Epoch {epoch + 1} training loss: {loss}')
 
-    def train(self, X, y):
-        pass
+    def train_batch(self, X_batch, y_batch):
+        # forward
+        X_batch = self.flatten(X_batch)
+        out = self.dense(X_batch)
+        loss = self.loss(out, y_batch)
+
+        # backward
+        dloss = self.loss.backward(out, y_batch)
+        _ = self.dense.backward(dloss)
+
+        return loss
 
     def predict(self, X):
         X = self.flatten(X)
