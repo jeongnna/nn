@@ -6,20 +6,20 @@ from nn.layers import Dense
 
 
 def test_dense():
-    weight = np.array([[-0.3, -0.2],
+    weights = np.array([[-0.3, -0.2],
                        [-0.1,  0. ],
                        [ 0.1,  0.2]])
 
     bias = np.array([1., 2.])
 
-    dense = Dense(*weight.shape)
-    dense.weight = weight
+    dense = Dense(*weights.shape)
+    dense.weights = weights
     dense.bias = bias
 
-    tf_dense = tf.keras.layers.Dense(weight.shape[1],
-                                     kernel_initializer=tf.constant_initializer(weight),
+    tf_dense = tf.keras.layers.Dense(weights.shape[1],
+                                     kernel_initializer=tf.constant_initializer(weights),
                                      bias_initializer=tf.constant_initializer(bias))
-    tf_dense.build(input_shape=weight.shape[0])
+    tf_dense.build(input_shape=weights.shape[0])
 
     x = np.array([[0. , 0.1, 0.2],
                   [0.3, 0.4, 0.5],

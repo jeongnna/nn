@@ -3,7 +3,7 @@ from numpy.testing import assert_array_equal
 from .activations import activations, Activation
 
 
-def _checkLayerDimension(dim):
+def _check_layer_dim(dim):
     if isinstance(dim, int):
         assert dim > 0, 'Dimension must be greater than 0.'
         return (dim,)
@@ -18,7 +18,7 @@ def _checkLayerDimension(dim):
         raise TypeError(f'Dimension must be an integer or a tuple. Current value is {dim}.')
 
 
-def _checkActivation(activation):
+def _check_activation(activation):
     if activation is None:
         return activations['identity']()
 
