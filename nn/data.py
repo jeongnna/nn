@@ -3,7 +3,7 @@ import numpy as np
 
 class Dataset:
 
-    def __init__(self, data):
+    def __init__(self, data, **kwargs):
         if isinstance(data, tuple):
             for item in data:
                 assert isinstance(item, np.ndarray)

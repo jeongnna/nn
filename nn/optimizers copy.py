@@ -30,19 +30,21 @@ class SGD(Optimizer):
                 self.apply_gradients(var, grad)
 
     def apply_gradients(self, var, grad):
+        #x += - learning_rate * dx
+
+        #v(t+1) = momentum * v(t) - learning_rate * gradient
+        #theta(t+1) = theta(t) + v(t+1)
+
         assert var.shape == grad.shape
 
         if self.momentum:
-            # v(t+1) = momentum * v(t) - learning_rate * gradient
-            # theta(t+1) = theta(t) + v(t+1)
-            velocity = self.velocitys[id(var)] # id(var) 대체할 var 고유의 무언가가 있을까
+            velocity = self.velocitys[id(var)] # id(var) 아니고 뭐가 됐든 var 고유의 무언가
 
             velocity = self.momentum * velocity - self.learning_rate * grad
             var += velocity
 
             self.velocitys[id(var)] = velocitys
         else:
-            # x += - learning_rate * dx
             var -= self.learning_rate * grad
 
 
