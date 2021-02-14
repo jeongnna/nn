@@ -7,9 +7,17 @@ class Layer(ABC):
 
     def __init__(self, **kwargs):
         self.name = kwargs.get('name')
+        self._update_state = {}
 
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)
+    
+    @property
+    def trainable_variables(self):
+        # This method (actually property) should return dictionary which has information about trainable variable of the layer.
+        # For example:
+        # return {'weight': self.weights, 'bias': self.bias}
+        pass
 
     @abstractmethod
     def forward(self, x, **kwargs):
@@ -23,7 +31,7 @@ class Layer(ABC):
         assert self.trainable_variables.keys() == grads.keys()
 
         for var, grad in zip(self.trainable_variables.values(), grads.values()):
-            optimizer.apply_gradients(var, grad)
+            self._update_state = optimizer.apply_gradients(var, grad, **self._update_state)
 
 
 class Flatten(Layer):
