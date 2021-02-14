@@ -8,7 +8,11 @@ class Optimizer(ABC):
 
     @abstractmethod
     def apply_gradients(self, var, grad, **kwargs):
-        pass
+        assert var.shape == grad.shape
+        
+        # Update `var` using `grad` by some methods
+        
+        return kwargs
 
 
 class SGD(Optimizer):
@@ -29,22 +33,25 @@ class SGD(Optimizer):
             for var, grad in zip(var_list.values(), grads.values()):
                 self.apply_gradients(var, grad)
 
-    def apply_gradients(self, var, grad):
+    def apply_gradients(self, var, grad, **kwargs):
         assert var.shape == grad.shape
 
         if self.momentum:
             # v(t+1) = momentum * v(t) - learning_rate * gradient
             # theta(t+1) = theta(t) + v(t+1)
-            velocity = self.velocitys[id(var)] # id(var) 대체할 var 고유의 무언가가 있을까
+            
+            velocity = kwargs.get('velocity') or 0 ## 초기화 값 0 맞나? 확인 ㄱ
 
             velocity = self.momentum * velocity - self.learning_rate * grad
             var += velocity
 
-            self.velocitys[id(var)] = velocitys
+            kwargs['velocity'] = velocity
+
         else:
             # x += - learning_rate * dx
             var -= self.learning_rate * grad
-
+        
+        return kwargs
 
 
 class Adam(Optimizer):
