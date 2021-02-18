@@ -51,9 +51,9 @@ class Model(ABC):
 
         return out
 
-    def _backward(self, dloss, **kwargs):
+    def _backward(self, dloss, update=True, **kwargs):
         for layer in reversed(self.layers):
-            dloss = layer.backward(dloss, **kwargs)
+            dloss = layer.backward(dloss, update=update, **kwargs)
 
         return dloss
 

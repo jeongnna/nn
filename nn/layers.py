@@ -68,16 +68,15 @@ class Affine(Layer):
 
         return x.dot(self.weights) + self.bias
 
-    def backward(self, dout, **kwargs):
+    def backward(self, dout, update=False, **kwargs):
         assert dout.shape[-1]
 
         dw = self._x.T.dot(dout)
         db = np.sum(dout, axis=0).reshape(self.bias.shape)
         grads = {'weight': dw, 'bias': db}
 
-        optimizer = kwargs.get('optimizer')
-        if optimizer:
-            self._update(grads, optimizer)
+        if update:
+            self._update(grads, kwargs.get('optimizer'))
 
         dx = dout.dot(self.weights.T)
 
