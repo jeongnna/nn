@@ -9,9 +9,9 @@ class Optimizer(ABC):
     @abstractmethod
     def apply_gradients(self, var, grad, **kwargs):
         assert var.shape == grad.shape
-        
+
         # Update `var` using `grad` by some methods
-        
+
         return kwargs
 
 
@@ -23,6 +23,7 @@ class SGD(Optimizer):
         self.learning_rate = learning_rate
         self.momentum = momentum
 
+    """ 아마도 삭제할 코드
     def minimize(self, dloss, layers):
         for layer in reversed(layers):
             var_list = layer.trainable_variables
@@ -32,6 +33,7 @@ class SGD(Optimizer):
 
             for var, grad in zip(var_list.values(), grads.values()):
                 self.apply_gradients(var, grad)
+    """
 
     def apply_gradients(self, var, grad, **kwargs):
         assert var.shape == grad.shape
@@ -39,7 +41,7 @@ class SGD(Optimizer):
         if self.momentum:
             # v(t+1) = momentum * v(t) - learning_rate * gradient
             # theta(t+1) = theta(t) + v(t+1)
-            
+
             velocity = kwargs.get('velocity') or 0 ## 초기화 값 0 맞나? 확인 ㄱ
 
             velocity = self.momentum * velocity - self.learning_rate * grad
@@ -50,7 +52,7 @@ class SGD(Optimizer):
         else:
             # x += - learning_rate * dx
             var -= self.learning_rate * grad
-        
+
         return kwargs
 
 
