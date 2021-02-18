@@ -11,7 +11,7 @@ class Layer(ABC):
 
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)
-    
+
     @property
     def trainable_variables(self):
         # This method (actually property) should return dictionary which has information about trainable variable of the layer.
