@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import numpy as np
 
 
 class Optimizer(ABC):
@@ -17,7 +18,7 @@ class Optimizer(ABC):
 
 class SGD(Optimizer):
 
-    def __init__(self, learning_rate=0.01, momentum=0.0, *args, **kwargs):
+    def __init__(self, learning_rate=0.01, momentum=0., *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.learning_rate = learning_rate
@@ -38,11 +39,11 @@ class SGD(Optimizer):
     def apply_gradients(self, var, grad, **kwargs):
         assert var.shape == grad.shape
 
-        if self.momentum:
+        if self.momentum > 0.:
             # v(t+1) = momentum * v(t) - learning_rate * gradient
             # theta(t+1) = theta(t) + v(t+1)
 
-            velocity = kwargs.get('velocity') or 0 ## 초기화 값 0 맞나? 확인 ㄱ
+            velocity = kwargs.get('velocity') or np.zeros_like(w)
 
             velocity = self.momentum * velocity - self.learning_rate * grad
             var += velocity
