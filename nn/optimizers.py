@@ -43,7 +43,7 @@ class SGD(Optimizer):
             # v(t+1) = momentum * v(t) - learning_rate * gradient
             # theta(t+1) = theta(t) + v(t+1)
 
-            velocity = kwargs.get('velocity') or np.zeros_like(w)
+            velocity = kwargs.get('velocity', np.zeros_like(var))
 
             velocity = self.momentum * velocity - self.learning_rate * grad
             var += velocity
